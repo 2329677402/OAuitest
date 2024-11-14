@@ -5,3 +5,7 @@ __pycache__
 allure-results
 logs
 latest_logs
+*.xlsx
+*.csv
+*.xmind
+*.log

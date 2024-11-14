@@ -17,57 +17,88 @@ fake = Faker('zh_CN')  # 生成虚拟数据
 
 class ExcelReader:
     """
-    读取Excel文件中的内容。返回list。
-    如：
-    Excel中内容为：
-    | A  | B  | C  | x |
-    | A1 | B1 | C1 | . |
-    | A2 | B2 | C2 | . |
-
-    默认输出结果：
-    [{A: A1, B: B1, C:C1}, {A:A2, B:B2, C:C2}]
-
-    line=False输出结果：
-    [[A,B,C], [A1,B1,C1], [A2,B2,C2]]
-
-    可以指定sheet，通过index或者name：
-    ExcelReader(excel, sheet=2)
-    ExcelReader(excel, sheet='BaiDuTest')
+    功能: 读取Excel文件数据
+    使用:
+        excel_reader = ExcelReader(file_path='../data/case_xlsx/test_web.xlsx', sheet_name='Sheet1', header=True)
+        data = excel_reader.read_excel()[0].get("邮箱")
+        print(data)  # dongdong@qq.com
     """
 
-    def __init__(self, excel_path: str, sheet: int = 0 or str, header: bool = True):
+    def __init__(self, file_path: str, sheet_name: str = "Sheet1", header: bool = True):
         """
-        :param excel_path: Excel文件路径
-        :param sheet: sheet工作表名称(字符串)或者索引(整数, 0为第一个sheet)
-        :param header: 表头行, True:包含, False:不包含
+        :param file_path: Excel文件路径.
+        :param sheet_name: sheet工作表名称(字符串或索引)，默认为第一个sheet.
+        :param header: 表头行, True:包含, False:不包含.
         """
-        if os.path.exists(excel_path):
-            self.excel_path = excel_path
-        else:
-            raise FileNotFoundError('文件不存在！')
-        self.sheet = sheet
-        self.header = header
-        self._data = []
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"文件不存在: {file_path}")
 
-    @property
-    def data(self):
+        self.file_path = file_path
+        self.sheet_name = sheet_name
+        self.header = 0 if header else None
+        self._data = None
+
+    def read_excel(self):
         """
         功能: 读取excel数据
-        :return: 将Excel数据转换为字典列表或者嵌套列表
+        :return: 将Excel数据转换为字典列表
         """
-        if not self._data:
-            df = pd.read_excel(self.excel_path, sheet_name=self.sheet)
-            if self.header:
-                self._data = df.to_dict(orient='records')  # 将数据转换为字典列表
-            else:
-                self._data = df.values.tolist()  # 将数据转换为嵌套列表
-        return self._data
+        if self._data is None:
+            self._data = pd.read_excel(self.file_path, sheet_name=self.sheet_name, header=self.header)
+            if self.header is None:
+                self._data.columns = [f"Column{i}" for i in range(1, len(self._data.columns) + 1)]
+        return self._data.to_dict(orient='records')
+
+
+class CSVReader:
+    """
+    功能: 读取CSV文件数据
+    使用:
+        csv_reader = CSVReader(file_path='../data/case_csv/test_web.csv', header=True)
+        data = csv_reader.read_csv()[0].get("邮箱")
+        print(data)  # test1@example.com
+    """
+
+    def __init__(self, file_path: str, header: bool = True):
+        """
+        :param file_path: CSV文件路径.
+        :param header: 表头行, True:包含, False:不包含.
+        """
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"文件不存在: {file_path}")
+
+        self.file_path = file_path
+        self.header = 0 if header else None
+        self._data = None
+
+    def read_csv(self):
+        """
+        功能: 读取CSV数据
+        :return: 将CSV数据转换为字典列表
+        """
+        if self._data is None:
+            self._data = pd.read_csv(self.file_path, header=self.header)
+            if self.header is None:
+                self._data.columns = [f"Column{i}" for i in range(1, len(self._data.columns) + 1)]
+        return self._data.to_dict(orient='records')
 
 
 class YamlReader:
-    """读取yaml文件数据"""
+    """
+    功能: 读取Yaml文件数据
+    使用:
+        yaml_reader = YamlReader(file_path='../data/locate_yaml/locate_web.yaml')
+        data = yaml_reader.read_yaml("common_page").get("home_model")
+        print(data)  # span:contains('首页')
+    """
 
     def __init__(self, file_path: str):
+        """
+         :param file_path: Yaml文件路径.
+         """
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"文件不存在: {file_path}")
+
         self.file_path = file_path
 
     def read_yaml(self, key: str = None) -> Union[dict, list, str]:
@@ -78,19 +109,26 @@ class YamlReader:
         """
         try:
             with open(self.file_path, encoding='utf-8') as f:
-                data = yaml.load(f, Loader=yaml.FullLoader)  # yaml.FullLoader: 用于加载yaml文件内容
+                _data = yaml.load(f, Loader=yaml.FullLoader)  # yaml.FullLoader: 用于加载yaml文件内容
                 if key:
-                    for item in data:
+                    for item in _data:
                         if item.get(key) is not None:
                             return item.get(key)
                 else:
-                    return data
+                    return _data
         except Exception as e:
-            logging.error(f'读取Yaml文件失败: {e}')
+            logging.error(f'Yaml文件读取失败: {e}')
+            raise
 
 
 class RandomDataGenerator:
-    """基于 faker库 随机测试数据"""
+    """
+    功能: 基于 faker库 随机测试数据
+    使用:
+        generator = RandomDataGenerator()
+        data = generator.random_name
+        print(data)  # 随机姓名: 张三
+    """
 
     @property
     def random_name(self):
@@ -187,17 +225,24 @@ class RandomDataGenerator:
         return fake.date_of_birth(tzinfo=None, minimum_age=0, maximum_age=age)
 
 
-def replace_extend(file_path):
-    """
-    功能: 替换文件后缀名, 将py文件替换为yaml文件
-    :param file_path: 文件路径
-    :return: .py -> .yaml
-    """
-    return os.path.basename(file_path).replace('py', 'yaml')
-
-
 # 测试功能是否正常
 if __name__ == '__main__':
-    # 读取faker库的测试数据
+    # 验证RandomDataGenerator功能
     generator = RandomDataGenerator()
-    print(f"随机姓名: {generator.random_name}")
+    data = generator.random_name
+    print(data)  # 随机姓名: 张三
+
+    # 验证ExcelReader功能
+    excel_reader = ExcelReader(file_path='../data/case_xlsx/test_web.xlsx', sheet_name='Sheet1', header=True)
+    data = excel_reader.read_excel()[0].get("邮箱")
+    print(data)  # dongdong@qq.com
+
+    # 验证CSVReader功能
+    csv_reader = CSVReader(file_path='../data/case_csv/test_web.csv', header=True)
+    data = csv_reader.read_csv()[0].get("邮箱")
+    print(data)  # test1@example.com
+
+    # 验证YamlReader功能
+    yaml_reader = YamlReader(file_path='../data/locate_yaml/locate_web.yaml')
+    data = yaml_reader.read_yaml("common_page").get("home_model")
+    print(data)  # span:contains('首页')

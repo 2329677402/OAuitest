@@ -11,26 +11,24 @@ import os
 from utils.read_util import YamlReader
 
 __all__ = [
-    'BASE_PATH',             # 项目根路径
-    'LOG_PATH',              # 日志路径, BASE_PATH + "logs"
-    'CASE_PATH',             # 测试用例集路径, BASE_PATH + "tests"
-    'CASEYMAL_PATH',         # Yaml用例数据路径, BASE_PATH + "data/case_yaml"
-    'LOCATORYMAL_PATH',      # Yaml定位数据路径, BASE_PATH + "data/locate_yaml"
-    'CONFIG_YAML_FILE',     # Yaml配置文件路径, BASE_PATH + "config/config.yaml"
-    'DATA_FILE',            # 测试文件路径, BASE_PATH + "data/file"
-    'DIFF_IMGPATH',         # 图片对比路径, BASE_PATH + "data/file/img"
-    'RESULTS_PATH',          # 测试数据路径, BASE_PATH + "allure/allure-results"
-    'REPORT_PATH',           # 测试报告路径, BASE_PATH + "allure/allure-report"
-    'SCREENSHOT_PATH',       # 截图路径, BASE_PATH + "allure/allure-screenshot"
-    'TEMP_PATH',             # 临时路径, BASE_PATH + "allure/allure-temp"
-    'WIN_CHROMEDRIVER',     # 谷歌浏览器
-    'WIN_FIREFOXDRIVER',    # 火狐浏览器
-    'LINUX_CHROMEDRIVER',   # 谷歌浏览器
+    'BASE_PATH',  # 项目根路径
+    "data_path",  # 测试数据路径
+    'LOG_PATH',  # 日志路径, BASE_PATH + "logs"
+    'CASE_PATH',  # 测试用例集路径, BASE_PATH + "tests"
+    'CASEYMAL_PATH',  # Yaml用例数据路径, BASE_PATH + "data/case_yaml"
+    'LOCATORYMAL_PATH',  # Yaml定位数据路径, BASE_PATH + "data/locate_yaml"
+    'DATA_FILE',  # 测试文件路径, BASE_PATH + "data/file"
+    'DIFF_IMGPATH',  # 图片对比路径, BASE_PATH + "data/file/img"
+    'screenshot_path',  # 截图路径
+    'download_path',  # 截图路径
+    'WIN_CHROMEDRIVER',  # 谷歌浏览器
+    'WIN_FIREFOXDRIVER',  # 火狐浏览器
+    'LINUX_CHROMEDRIVER',  # 谷歌浏览器
     'LINUX_FIREFOXDRIVER',  # 火狐浏览器
-    'MAC_CHROMEDRIVER',     # 谷歌浏览器
-    'MAC_FIREFOXDRIVER',    # 火狐浏览器
-    'WEB_URL',              # Web端测试地址
+    'MAC_CHROMEDRIVER',  # 谷歌浏览器
+    'MAC_FIREFOXDRIVER',  # 火狐浏览器
 ]
+
 
 # Explain:
 # 1. os.path.abspath(__file__): 返回当前文件的绝对路径
@@ -38,13 +36,13 @@ __all__ = [
 # 3. os.path.join(): 拼接路径
 # 4. os.path.expanduser(): 将path中包含的"~"和"~user"转换成用户目录
 
+
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # 项目根路径
+data_path = os.path.join(BASE_PATH, "data")  # 测试数据路径
 
 LOG_PATH = os.path.join(BASE_PATH, "logs")  # 日志存放路径
 
 CASE_PATH = os.path.join(BASE_PATH, "tests")  # 测试用例集路径
-
-CONFIG_YAML_FILE = os.path.join(BASE_PATH, "config", "config.yaml")  # Yaml配置文件路径
 
 CASEYMAL_PATH = os.path.join(BASE_PATH, "data", "case_yaml")  # Yaml用例数据路径
 
@@ -54,13 +52,8 @@ DATA_FILE = os.path.join(BASE_PATH, "data", "file")  # 测试文件路径
 
 DIFF_IMGPATH = os.path.join(BASE_PATH, "data", "file", "img")  # 图片对比路径
 
-RESULTS_PATH = os.path.join(BASE_PATH, "allure", "allure-results")  # 测试数据路径
-
-REPORT_PATH = os.path.join(BASE_PATH, "allure", "allure-report")  # 测试报告路径
-
-SCREENSHOT_PATH = os.path.join(BASE_PATH, "allure", "allure-screenshot")  # 截图路径
-
-TEMP_PATH = os.path.join(BASE_PATH, "allure", "allure-temp")  # 临时路径
+screenshot_path = os.path.join(BASE_PATH, "data", "screenshot")  # 截图路径
+download_path = os.path.join(BASE_PATH, "data", "download")  # 截图路径
 
 WIN_CHROMEDRIVER = os.path.join(BASE_PATH, "driver", "windows", "chromedriver.exe")  # 谷歌浏览器
 WIN_FIREFOXDRIVER = os.path.join(BASE_PATH, "driver", "windows", "geckodriver.exe")  # 火狐浏览器
@@ -68,5 +61,3 @@ LINUX_CHROMEDRIVER = os.path.join(BASE_PATH, "driver", "linux", "chromedriver") 
 LINUX_FIREFOXDRIVER = os.path.join(BASE_PATH, "driver", "linux", "geckodriver")  # 火狐浏览器
 MAC_CHROMEDRIVER = os.path.join(BASE_PATH, "driver", "mac", "chromedriver")  # 谷歌浏览器
 MAC_FIREFOXDRIVER = os.path.join(BASE_PATH, "driver", "mac", "geckodriver")  # 火狐浏览器
-
-WEB_URL = YamlReader(CONFIG_YAML_FILE).read_yaml('WEB_UI').get('WEB_URL')  # Web端测试地址
