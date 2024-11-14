@@ -1,0 +1,41 @@
+- common_page: # 公共页面
+    home_model: "span:contains('首页')" # 首页模块
+    absent_model: "span:contains('考勤管理')" # 考勤管理
+    myabsent_model: "span:contains('个人考勤')" # 个人考勤
+    subabsent_model: "span:contains('下属考勤')" # 下属考勤
+    inform_model: "span:contains('通知管理')" # 通知管理
+    publish_inform_model: "span:contains('发布通知')" # 发布通知
+    inform_list_model: "span:contains('通知列表')" # 通知列表
+    staff_model: "span:contains('员工管理')" # 员工管理
+    add_staff_model: "span:contains('新增员工')" # 新增员工
+    staff_list_model: "span:contains('员工列表')" # 员工列表
+
+
+- login_page: # 登录页面
+    email_input: "[name='email']" # 邮箱输入框
+    password_input: "[name='password']" # 密码输入框
+    login_button: ".login100-form-btn" # 登录按钮
+    error_message: "p.el-message__content" # 错误提示信息
+
+
+- home_page: # 首页页面
+    auth_department: '/html/body/div[1]/section/section/header/div[2]/span/span[2]' # 部门标识
+    sidebar: "aside.el-aside" # 侧边栏
+    staff_chart: "/html/body/div[1]/section/section/main/div/div[3]/div/div[2]" # 员工统计图表
+    inform_card: "//*[@id='app']/section/section/main/div/div[5]/div/div[1]/div/div[2]" # 通知卡片
+    absent_card: "//*[@id='app']/section/section/main/div/div[5]/div/div[2]/div/div[2]" # 考勤卡片
+    staff_title: "h2:contains('部门')" # 员工统计标题
+    inform_title: "h2:contains('通知')" # 通知标题
+    absent_title: "h2:contains('请假')" # 考勤标题
+
+
+- absent_page: # 考勤管理页面
+
+
+
+
+- inform_page: # 通知管理页面
+
+
+- staff_page: # 员工管理页面
+
