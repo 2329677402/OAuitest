@@ -6,10 +6,10 @@
 @ File        : test_web_staff.py
 @ Description : Web-员工管理测试用例
 """
-import os.path
-from config import data_path
+import os
 import allure
 import pytest
+from common import upload_path, download_path, screenshot_path
 from pages.web_page.staff_page import WebStaffPage
 from tests.test_base_case import BaseTestCase
 
@@ -86,8 +86,8 @@ class TestStaff(BaseTestCase):
         self.click(
             "/html/body/div[1]/section/section/main/div[2]/div[3]/div/div[1]/div/div[1]/div[3]/div/div[1]/div/table/tbody/tr[1]/td[1]/div/label/span")
         self.click("button:contains('下载')")
-        screenshot_save_path = os.path.join(self.SCREENSHOT_PATH, "download.png")
-        download_save_path = os.path.join(self.DOWNLOAD_PATH, "员工信息.xlsx")
+        screenshot_save_path = os.path.join(screenshot_path, "download.png")
+        download_save_path = os.path.join(download_path, "员工信息.xlsx")
         self.save_screenshot(screenshot_save_path)
         self.assert_downloaded_file(download_save_path)
 
@@ -103,8 +103,8 @@ class TestStaff(BaseTestCase):
         self.click(
             "/html/body/div[1]/section/section/main/div[2]/div[3]/div/div[1]/div/div[1]/div[2]/table/thead/tr/th[1]/div/label")
         self.click("button:contains('下载')")
-        screenshot_save_path = os.path.join(self.SCREENSHOT_PATH, "download.png")
-        download_save_path = os.path.join(self.DOWNLOAD_PATH, "员工信息.xlsx")
+        screenshot_save_path = os.path.join(screenshot_path, "download.png")
+        download_save_path = os.path.join(download_path, "员工信息.xlsx")
         self.save_screenshot(screenshot_save_path)
         self.assert_downloaded_file(download_save_path)
 
@@ -117,6 +117,6 @@ class TestStaff(BaseTestCase):
         self.login()
         self.click("span:contains('员工管理')")
         self.click("span:contains('员工列表')")
-        file_path = os.path.join(data_path, "upload", "员工信息.xlsx")
+        file_path = os.path.join(upload_path, "员工信息.xlsx")
         self.choose_file('input[type="file"]', file_path)
         self.assert_text('员工信息上传成功', 'p.el-message__content')

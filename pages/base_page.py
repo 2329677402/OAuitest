@@ -6,11 +6,12 @@
 @ File        : base_page.py
 @ Description : 基础页面类
 """
-from config import LOCATORYMAL_PATH
-from utils.read_util import YamlReader
+from common.setting import ensure_path_sep
+from utils.read_tool.read_file import YamlReader
 
-locate_web_yaml_path = YamlReader(LOCATORYMAL_PATH + "/locate_web.yaml")
+LOCATORYMAL_PATH = ensure_path_sep("\\data\\locate_yaml\\locate_web.yaml")
 
+locate_web_yaml_path = YamlReader(LOCATORYMAL_PATH)
 locate_web_common = locate_web_yaml_path.read_yaml('common_page') # 公共页面元素定位
 locate_web_login = locate_web_yaml_path.read_yaml('login_page') # 登录页面元素定位
 locate_web_home = locate_web_yaml_path.read_yaml('home_page') # 首页页面元素定位

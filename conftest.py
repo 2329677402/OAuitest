@@ -4,38 +4,49 @@
 @ Date        : 2024/11/1 下午9:55
 @ Author      : Poco Ray
 @ File        : conftest.py
-@ Description :
+@ Description : Pytest配置文件
 """
 import os
-import shutil
 import pytest
 import time
-from seleniumbase import BaseCase
+from common import drivers_path
+from utils import config
 from appium import webdriver as appium_driver
 from appium.options.common.base import AppiumOptions
-from pkg_resources import resource_filename
-
-BASE_PATH = os.path.dirname(os.path.abspath(__file__))  # 项目根路径
-DRIVER_DIR = os.path.join(BASE_PATH, 'drivers')  # 自定义驱动目录
-DRIVER_PATH = os.path.join(DRIVER_DIR, 'chromedriver.exe')  # 目标ChromeDriver路径
-SELENIUMBASE_DRIVER_PATH = resource_filename('seleniumbase', 'drivers/chromedriver.exe')  # SeleniumBase默认驱动路径
 
 
-@pytest.fixture(scope='session', autouse=True)
-def web_driver():
-    # 检查自定义驱动目录是否存在，不存在则创建
-    if not os.path.exists(DRIVER_DIR):
-        os.makedirs(DRIVER_DIR)
+def get_driver_path(driver_name):
+    """根据操作系统获取驱动路径"""
+    if os.name == 'nt':  # Windows
+        return os.path.join(drivers_path, f"{driver_name}.exe")
+    else:  # Linux and others
+        return os.path.join(drivers_path, driver_name)
 
-    # 检查chromedriver.exe是否存在，不存在则从seleniumbase复制
-    if not os.path.exists(DRIVER_PATH):
-        if os.path.exists(SELENIUMBASE_DRIVER_PATH):
-            shutil.copy(SELENIUMBASE_DRIVER_PATH, DRIVER_PATH)
-            print(f"已将chromedriver.exe复制到指定路径：{DRIVER_PATH}")
+
+@pytest.fixture(scope='session')
+def setup_browser_driver():
+    """根据配置文件中的浏览器类型安装相应的驱动"""
+    browser = config.browser.lower()
+    driver_name = None
+    if browser == "chrome":
+        driver_name = "chromedriver"
+    elif browser == "firefox":
+        driver_name = "geckodriver"
+    elif browser == "edge":
+        driver_name = "edgedriver"
+    elif browser == "ie":
+        driver_name = "iedriver"
+    elif browser == "opera":
+        driver_name = "operadriver"
+    else:
+        raise ValueError(f"不支持的浏览器类型: {browser}")
+
+    if driver_name:
+        driver_path = get_driver_path(driver_name)
+        if not os.path.exists(driver_path):
+            os.system(f"seleniumbase install {driver_name}")
         else:
-            print("错误：在 SeleniumBase 的默认驱动程序路径中未找到 chromedriver.exe！")
-            return
-    yield
+            print(f"{driver_name} 已存在于 {driver_path}，无需下载.")
 
 
 @pytest.fixture(scope='session')

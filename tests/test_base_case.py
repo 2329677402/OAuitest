@@ -7,7 +7,9 @@
 @ Description : 测试用例自定义基类
 """
 import os
-from config import screenshot_path, download_path
+import pytest
+from utils import config
+from common import screenshot_path, download_path
 from seleniumbase import BaseCase
 from pages.base_page import locate_web_home
 from pages.web_page.login_page import WebLoginPage
@@ -15,27 +17,22 @@ from pages.web_page.login_page import WebLoginPage
 BaseCase.main(__name__, __file__)
 
 
+@pytest.mark.usefixtures('setup_browser_driver')
 class BaseTestCase(BaseCase):
-    SCREENSHOT_PATH = screenshot_path
-    DOWNLOAD_PATH = download_path
-
     def setUp(self, **kwargs):
         super().setUp()
         # 设置浏览器打开最大化
         self.maximize_window()
-        # 设置浏览器下载路径
+
+        if not os.path.exists(screenshot_path):
+            os.makedirs(screenshot_path)
+        if not os.path.exists(download_path):
+            os.makedirs(download_path)
+        # 设置浏览器下载文件的路径, 下载路径变更后, 使用assert_downloaded_file方法断言时, 断言路径也需要变更.
         self.driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
         params = {'cmd': 'Page.setDownloadBehavior',
-                  'params': {'behavior': 'allow', 'downloadPath': self.DOWNLOAD_PATH}}
+                  'params': {'behavior': 'allow', 'downloadPath': download_path}}
         self.driver.execute("send_command", params)
-
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        if not os.path.exists(cls.SCREENSHOT_PATH):
-            os.makedirs(cls.SCREENSHOT_PATH)
-        if not os.path.exists(cls.DOWNLOAD_PATH):
-            os.makedirs(cls.DOWNLOAD_PATH)
 
     def tearDown(self):
         self.save_teardown_screenshot()
@@ -56,7 +53,7 @@ class BaseTestCase(BaseCase):
         :param password:
         :return:
         """
-        self.open('http://localhost:5173/#/login')
+        self.open(config.host)
         WebLoginPage.login(self, email, password)
 
     def check_permissions(self):
