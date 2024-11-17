@@ -167,6 +167,11 @@ class DingTalk(BaseModel):
     webhook: Union[Text, None]  # 钉钉webhook地址
     secret: Union[Text, None]  # 钉钉secret加签密钥
 
+class Lark(BaseModel):
+    """ 飞书通知 """
+    webhook: Union[Text, None]  # 飞书webhook地址
+    secret: Union[Text, None]  # 飞书secret加签密钥
+
 
 class MySqlDB(BaseModel):
     """ mysql数据库 """
@@ -201,7 +206,7 @@ class Config(BaseModel):
     mirror_source: Text
     wechat: "Webhook"
     email: "Email"
-    lark: "Webhook"
+    lark: "Lark"
     host: Text
     app_host: Union[Text, None]
     browser: Text

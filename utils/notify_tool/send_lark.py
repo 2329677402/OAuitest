@@ -5,14 +5,18 @@
 @ Author      : Poco Ray
 @ File        : send_lark.py
 @ Description : 飞书机器人通知
+@ Docs: https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot
 """
+import base64
+import hashlib
+import hmac
 import json
 import logging
 import time
 import datetime
 import requests
 import urllib3
-from utils.other_tool.allure_data.allure_report_data import TestMetrics
+from utils.other_tool.allure_data.allure_report_data import TestMetrics, AllureFileClean
 from utils import config
 from utils.other_tool.get_local_ip import get_host_ip
 
@@ -38,6 +42,7 @@ class FeiShuTalkChatBot:
 
     def __init__(self, metrics: TestMetrics):
         self.metrics = metrics
+        self.timestamp = str(round(time.time()))
 
     def send_text(self, msg: str):
         """
@@ -55,12 +60,24 @@ class FeiShuTalkChatBot:
         logging.debug('text类型：%s', data)
         return self.post()
 
+    def get_sign(self) -> str:
+        """ 生成签名 """
+        string_to_sign = f"{self.timestamp}\n{config.lark.secret}".encode('utf-8')
+        hmac_code = hmac.new(string_to_sign, digestmod=hashlib.sha256).digest()
+        sign = base64.b64encode(hmac_code).decode('utf-8')
+        return sign
+
     def post(self):
         """
         发送消息（内容 UTF-8 编码）
         :return: 返回消息发送结果
         """
+        sign = self.get_sign()
+        headers = {'Content-Type': 'application/json; charset=utf-8'}
         rich_text = {
+            # 如果机器人开启签名校验, 需要传入timestamp和sign参数, 否则注释掉即可, 其他的无需变更.
+            "timestamp": f"{self.timestamp}",
+            "sign": f"{sign}",
             "email": "3157043973@qq.com",
             "msg_type": "post",
             "content": {
@@ -119,15 +136,9 @@ class FeiShuTalkChatBot:
                 }
             }
         }
-        headers = {'Content-Type': 'application/json; charset=utf-8'}
 
         post_data = json.dumps(rich_text)
-        response = requests.post(
-            config.lark.webhook,
-            headers=headers,
-            data=post_data,
-            verify=False
-        )
+        response = requests.post(config.lark.webhook, headers=headers, data=post_data, verify=False)
         result = response.json()
 
         if result.get('StatusCode') != 0:
@@ -146,3 +157,8 @@ class FeiShuTalkChatBot:
             logging.error("消息发送失败，自动通知：%s", error_data)
             requests.post(config.lark.webhook, headers=headers, data=json.dumps(error_data))
         return result
+
+
+# 测试
+if __name__ == '__main__':
+    FeiShuTalkChatBot(AllureFileClean().get_case_count()).post()

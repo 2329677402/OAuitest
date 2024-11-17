@@ -1,4 +1,4 @@
-project_name: OA_System-WebUI
+project_name: OA_System
 
 env: 测试环境
 # 测试人员名称，作用于自动生成代码的作者，以及发送企业微信、钉钉通知的测试负责人
@@ -35,9 +35,11 @@ ding_talk:
 wechat:
   webhook:
 
-# 飞书通知
+# 飞书通知, 加签密钥处理方法:https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot?lang=zh-CN#%E4%B8%BA%E8%87%AA%E5%AE%9A%E4%B9%89%E6%9C%BA%E5%99%A8%E4%BA%BA%E6%B7%BB%E5%8A%A0%E5%AE%89%E5%85%A8%E8%AE%BE%E7%BD%AE
 lark:
   webhook: https://open.feishu.cn/open-apis/bot/v2/hook/609f217d-b6ff-4412-8dac-4744f22a80a0
+  # 签名校验
+  secret: ZoXkM3G9l8NrimORCo9QAh
 
 
 # 数据库相关配置

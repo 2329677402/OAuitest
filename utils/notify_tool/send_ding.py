@@ -5,6 +5,7 @@
 @ Author      : Poco Ray
 @ File        : send_ding.py
 @ Description : 钉钉机器人通知
+@ Docs: https://open.dingtalk.com/document/robots/custom-robot-access
 """
 import base64
 import hashlib
@@ -28,25 +29,21 @@ class DingTalkSendMsg:
         self.metrics = metrics
         self.timeStamp = str(round(time.time() * 1000))
 
-    def xiao_ding(self):
-        sign = self.get_sign()
-        # 从yaml文件中获取钉钉配置信息
-        webhook = config.ding_talk.webhook + "&timestamp=" + self.timeStamp + "&sign=" + sign
-        return DingtalkChatbot(webhook)
-
     def get_sign(self) -> Text:
         """
         根据时间戳 + "sign" 生成密钥
         :return:
         """
         string_to_sign = f'{self.timeStamp}\n{config.ding_talk.secret}'.encode('utf-8')
-        hmac_code = hmac.new(
-            config.ding_talk.secret.encode('utf-8'),
-            string_to_sign,
-            digestmod=hashlib.sha256).digest()
-
+        hmac_code = hmac.new(config.ding_talk.secret.encode('utf-8'), string_to_sign, digestmod=hashlib.sha256).digest()
         sign = urllib.parse.quote_plus(base64.b64encode(hmac_code))
         return sign
+
+    def xiao_ding(self):
+        sign = self.get_sign()
+        # 从yaml文件中获取钉钉配置信息
+        webhook = config.ding_talk.webhook + "&timestamp=" + self.timeStamp + "&sign=" + sign
+        return DingtalkChatbot(webhook)
 
     def send_text(self, msg: Text, mobiles=None) -> None:
         """
@@ -80,7 +77,7 @@ class DingTalkSendMsg:
         :param title: markdown消息的标题
         :param msg: markdown格式的消息内容
         :param mobiles: 艾特用户电话列表, 可选
-        :param is_at_all: 是否艾特所有人, 可选
+        :param is_at_all: 是否 @所有人, 可选
         :return: None
         """
         if mobiles is None:
@@ -120,10 +117,11 @@ class DingTalkSendMsg:
                f"https://img.alicdn.com/tfs/TB1NwmBEL9TBuNjy1zbXXXpepXa-2400-1218.png" \
                f")\n" \
                f" > ###### 测试报告 [详情](http://172.25.48.1:53230/) \n"
-               # f" > ###### 测试报告 [详情](http://{get_host_ip()}:53230/index.html#) \n"
+        # f" > ###### 测试报告 [详情](http://{get_host_ip()}:53230/index.html#) \n"
         DingTalkSendMsg(AllureFileClean().get_case_count()).send_markdown(
             title="【UI自动化通知】", msg=text, is_at_all=is_at_all)
 
 
+# 测试
 if __name__ == '__main__':
     DingTalkSendMsg(AllureFileClean().get_case_count()).send_ding_notification()
