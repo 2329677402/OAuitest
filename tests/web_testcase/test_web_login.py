@@ -36,23 +36,22 @@ class TestWebLogin(BaseTestCase):
     @allure.title("登录失败(邮箱不存在+密码任意)")
     @pytest.mark.run(order=3)
     def test_web_login_fail02(self):
-        self.login(email="dong@qq.com")
+        self.login(email="dong@qq.com", password="123")
         self.assert_text("请输入正确的邮箱", locate_web_login['error_message'])
 
     @allure.severity(allure.severity_level.NORMAL)
     @allure.title("登录失败(邮箱不合法+密码任意)")
     @pytest.mark.run(order=4)
     def test_web_login_fail03(self):
-        self.login(email="dongdong@qqcom")
+        self.login(email="dongdong@qqcom", password="111111")
         self.assert_text("邮箱格式错误", locate_web_login['error_message'])
 
     @allure.severity(allure.severity_level.NORMAL)
     @allure.title("登录失败(邮箱为空+密码任意)")
     @pytest.mark.run(order=5)
     def test_web_login_fail04(self):
-        self.login(email="")
+        self.login(email="", password="111111")
         self.assert_text("邮箱格式错误", locate_web_login['error_message'])
-
 
     @allure.severity(allure.severity_level.NORMAL)
     @allure.title("登录失败(邮箱存在+密码不合法)")

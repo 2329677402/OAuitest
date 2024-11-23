@@ -9,7 +9,7 @@
 from common.setting import ensure_path_sep
 from utils.read_tool.read_file import YamlReader
 
-LOCATORYMAL_PATH = ensure_path_sep("\\data\\locate_yaml\\locate_web.yaml")
+LOCATORYMAL_PATH = ensure_path_sep("\\data\\locator\\loc_web.yaml")
 
 locate_web_yaml_path = YamlReader(LOCATORYMAL_PATH)
 locate_web_common = locate_web_yaml_path.read_yaml('common_page') # 公共页面元素定位
@@ -18,8 +18,4 @@ locate_web_home = locate_web_yaml_path.read_yaml('home_page') # 首页页面元�
 locate_web_absent = locate_web_yaml_path.read_yaml('absent_page') # 考勤管理页面元素定位
 locate_web_inform = locate_web_yaml_path.read_yaml('inform_page') # 考勤管理页面元素定位
 locate_web_staff = locate_web_yaml_path.read_yaml('staff_page') # 员工管理页面元素定位
-
-class BasePage:
-    def __init__(self, driver):
-        self.driver = driver
 

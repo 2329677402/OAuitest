@@ -32,4 +32,4 @@ def get_all_files(file_path, yaml_data_switch=False) -> list:
 
 # 测试
 if __name__ == '__main__':
-    print(get_all_files(file_path=ensure_path_sep('/data/locate_yaml'), yaml_data_switch=True))
+    print(get_all_files(file_path=ensure_path_sep('/data/locator'), yaml_data_switch=True))

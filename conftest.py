@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
 @ Date        : 2024/11/1 下午9:55
@@ -9,10 +8,10 @@
 import os
 import pytest
 import time
+from airtest.core.api import connect_device, auto_setup
+from poco.drivers.android.uiautomation import AndroidUiautomationPoco
 from common import drivers_path
 from utils import config
-from appium import webdriver as appium_driver
-from appium.options.common.base import AppiumOptions
 
 
 def get_driver_path(driver_name):
@@ -50,22 +49,12 @@ def setup_browser_driver():
 
 
 @pytest.fixture(scope='session')
-def app_driver():
-    options = AppiumOptions()
-    options.load_capabilities({
-        "platformName": "Android",  # 平台名称, adb shell getprop ro.product.brand
-        "platformVersion": "12",  # Android版本, adb shell getprop ro.build.version.release
-        "deviceName": "127.0.0.1:16384",  # MuMu模拟器固定ADB调试端口, adb devices
-        "appPackage": "com.android.browser",  # 包名, adb shell dumpsys window | findstr mCurrentFocus
-        "appActivity": ".BrowserActivity",  # 应用名, adb shell dumpsys window | findstr mCurrentFocus
-        "automationName": "uiautomator2",  # 自动化引擎
-        "autoGrantPermissions": True,  # 自动授予权限
-        "noReset": False,  # 是否重置app状态
-        "fullReset": False,  # 是否清理app缓存数据
-        "newCommandTimeout": 3600,  # 会话超时时间
-        "connectHardwareKeyboard": True,  # 是否连接硬件键盘
-    })
-    ad = appium_driver.Remote("http://localhost:4723", options=options)  # 创建driver并启动app
-    time.sleep(3)
-    yield ad
-    ad.quit()
+def setup_airtest_poco():
+    """配置 Airtest 和 Poco"""
+    # 连接设备
+    device = connect_device("android://127.0.0.1:5037/192.168.31.28:5555")
+    auto_setup(__file__)
+    poco = AndroidUiautomationPoco(device=device, use_airtest_input=True, screenshot_each_action=False)
+    yield poco
+    # 断开设备连接
+    device.disconnect()

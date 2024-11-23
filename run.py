@@ -20,7 +20,7 @@ import pyfiglet
 import pytest
 from utils.other_tool.models import NotificationType
 from utils.other_tool.allure_data.allure_report_data import AllureFileClean
-from utils.logging_tool.log_control import INFO
+from utils.log_tool.log_control import INFO
 from utils.notify_tool.send_wechat import WeChatSend
 from utils.notify_tool.send_ding import DingTalkSendMsg
 from utils.notify_tool.send_mail import SendEmail

@@ -7,7 +7,7 @@
 @ Description : 企业微信消息通知
 """
 import requests
-from utils.logging_tool.log_control import ERROR
+from utils.log_tool.log_control import ERROR
 from utils.other_tool.allure_data.allure_report_data import TestMetrics, AllureFileClean
 from utils.time_tool.time_control import now_time
 from utils.other_tool.get_local_ip import get_host_ip
@@ -61,7 +61,8 @@ class WeChatSend:
             ERROR.logger.error(res.json())
             raise SendMessageError("企业微信「MarkDown类型」消息发送失败")
 
-    def _upload_file(self, file):
+    @staticmethod
+    def _upload_file(file):
         """
         先将文件上传到临时媒体库
         """

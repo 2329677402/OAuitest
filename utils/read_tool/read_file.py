@@ -86,7 +86,7 @@ class YamlReader:
     """
     功能: Yaml文件读取
     使用:
-        yaml_reader = YamlReader(file_path='../data/locate_yaml/locate_web.yaml')
+        yaml_reader = YamlReader(file_path='../data/locator/loc_web.yaml')
         data = yaml_reader.read_yaml("common_page").get("home_model")
         print(data)  # span:contains('首页')
     """
@@ -258,6 +258,6 @@ if __name__ == '__main__':
     print(data)  # test1@example.com
 
     # 验证YamlReader功能
-    yaml_reader = YamlReader(file_path='../../data/locate_yaml/locate_web.yaml')
+    yaml_reader = YamlReader(file_path='../../data/locator/loc_web.yaml')
     data = yaml_reader.read_yaml("common_page").get("home_model")
     print(data)  # span:contains('首页')

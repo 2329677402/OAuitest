@@ -6,13 +6,16 @@
 @ File        : test_base_case.py
 @ Description : 测试用例自定义基类
 """
-import os
 import pytest
+
+from pages.app_page.login_page import AppLoginPage
 from utils import config
 from common import screenshot_path, download_path
 from seleniumbase import BaseCase
 from pages.base_page import locate_web_home
 from pages.web_page.login_page import WebLoginPage
+from airtest.core.api import *
+from poco.drivers.android.uiautomation import AndroidUiautomationPoco
 
 BaseCase.main(__name__, __file__)
 
@@ -21,7 +24,7 @@ BaseCase.main(__name__, __file__)
 class BaseTestCase(BaseCase):
     def setUp(self, **kwargs):
         super().setUp()
-        # 设置浏览器打开最大化
+        # 浏览器最大化
         self.maximize_window()
 
         if not os.path.exists(screenshot_path):
@@ -46,14 +49,15 @@ class BaseTestCase(BaseCase):
         # <<< 在 super() 行之前运行自定义代码. >>>
         super().tearDown()
 
-    def login(self, email: str = 'dongdong@qq.com', password: str = '111111'):
+    def login(self, url: str = config.host, email: str = 'dongdong@qq.com', password: str = '111111'):
         """
         功能: 登录成功
+        :param url:
         :param email:
         :param password:
         :return:
         """
-        self.open(config.host)
+        self.open(url)
         WebLoginPage.login(self, email, password)
 
     def check_permissions(self):
@@ -64,3 +68,22 @@ class BaseTestCase(BaseCase):
         locate_auth = locate_web_home['auth_department']
         department = self.get_text(locate_auth).split('[')[1].split(']')[0].strip()
         WebLoginPage.check_permissions(self, department)
+
+
+@pytest.mark.usefixtures('setup_airtest_poco')
+class BaseAppTestCase:
+    def __init__(self, poco: AndroidUiautomationPoco):
+        self.poco = poco
+
+    def app_login(self, appPackage: str = 'com.tongjiwisdom', username: str = "123456789", password: str = "123456"):
+        """
+        功能: 登录成功
+        :param appPackage:
+        :param username:
+        :param password:
+        :return:
+        """
+        clear_app(appPackage)
+        start_app(appPackage)
+        sleep(5.0)
+        AppLoginPage.app_login(self.poco, username, password)
